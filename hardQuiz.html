@@ -1,0 +1,1387 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Hard Quiz Game</title>
+  <style>
+    body {
+      background: #0f0f0f;
+      color: white;
+      font-family: sans-serif;
+      padding: 20px;
+      text-align: center;
+      
+    }
+    
+    #quiz-container {
+      display: none;
+    }
+    
+    .question-box {
+      margin-top: 30px;
+    }
+    
+    .option-btn {
+      display: block;
+      background: #1e1e1e;
+      margin: 10px auto;
+      padding: 10px;
+      width: 60%;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: 0.3s;
+      color: white;
+    }
+    
+    .option-btn.correct {
+      box-shadow: 0 0 10px 2px green;
+    }
+    
+    .option-btn.wrong {
+      box-shadow: 0 0 10px 2px red;
+    }
+    
+    #result-box {
+      display: none;
+      margin-top: 40px;
+    }
+    
+    #start-btn {
+      padding: 12px 25px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    
+    select,
+    input[type="number"] {
+      padding: 8px;
+      margin: 10px;
+      font-size: 16px;
+      color: white;
+    }
+    
+    body {
+      background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+      color: #ffffff;
+      font-family: 'Segoe UI', sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    
+    h1 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px cyan;
+    }
+    
+    #start-screen,
+    #quiz-container,
+    #result-box {
+      background: rgba(0, 0, 0, 0.5);
+      border: 2px solid cyan;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 15px cyan;
+      max-width: 600px;
+      margin: 0 auto 30px;
+    }
+    
+    select,
+    input[type="number"] {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+      color: black;
+      border-radius: 8px;
+      border: none;
+    }
+    
+    #start-btn,
+    #backToStartFromQuiz,
+    #backToStartFromResult,
+    #closeAbout {
+      padding: 10px 12px;
+      font-size: 18px;
+      background: cyan;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      color: #000;
+      font-weight: bold;
+      margin-top: 10px;
+      box-shadow: 0 0 10px #00ffff, 0 0 20px #00ffff inset;
+      transition: 0.3s;
+    }
+    
+    #start-btn:hover,
+    #backToStartFromQuiz:hover,
+    #backToStartFromResult:hover {
+      background: #fff;
+      color: #000;
+      box-shadow: 0 0 20px #00ffff, 0 0 30px #00ffff inset;
+    }
+    
+    .option-btn {
+      display: block;
+      background: #1e1e1e;
+      margin: 12px auto;
+      padding: 12px;
+      width: 80%;
+      border: none;
+      border-radius: 8px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: 0.3s;
+      color: white;
+      box-shadow: 0 0 10px #00f0ff50;
+    }
+    
+    .option-btn:hover {
+      background-color: #00f0ff;
+      color: #000;
+      box-shadow: 0 0 20px #00f0ff;
+    }
+    
+    .option-btn.correct {
+      background-color: #00ff00;
+      color: black;
+      box-shadow: 0 0 20px #00ff00;
+    }
+    
+    .option-btn.wrong {
+      background-color: #ff3333;
+      color: black;
+      box-shadow: 0 0 20px #ff3333;
+    }
+    
+    #score-result {
+      font-size: 24px;
+      color: #00ffcc;
+      margin-top: 20px;
+    }
+    
+    #wrong-questions {
+      margin-top: 20px;
+      text-align: left;
+    }
+    
+    a {
+      color: #00f0ff;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    
+    a:hover {
+      text-decoration: underline;
+    }
+    
+    .butt {
+      display: flex;
+      gap: 15px;
+      align-items: center;
+      justify-content: center;
+    }
+  </style>
+</head>
+
+<body>
+  
+  <h1>Periodic Table Quiz Game</h1>
+  
+  <div id="start-screen">
+    <p>Select Range of Elements:</p>
+    <select id="range-selector">
+      <option value="1-20">1–20</option>
+      
+      
+      <option value="21-40">21–40</option>
+      <option value="41-60">41–60</option>
+      <option value="61-80">61–80</option>
+      <option value="81-100">81–100</option>
+      <option value="101-118">101–118</option>
+      <option value="1-118">1–118 (All)</option>
+      
+    </select>
+    <div class="butt">
+      <button id="start-btn">Start Quiz</button>
+      
+      <a id="closeAbout" href="/PeriodicTable /index.html"> Close</a>
+    </div>
+    
+  </div>
+  
+  <div id="quiz-container">
+    <br>
+    <button id="backToStartFromQuiz" style="margin-bottom:10px;">⬅️ Back to Start</button>
+    <div id="question-count"></div>
+    
+    <div class="question-box">
+      <h2 id="question-text">Question Text</h2>
+      <div id="options-container"></div>
+    </div>
+  </div>
+  
+  <div id="result-box">
+    <br>
+    <button id="backToStartFromResult">⬅️ Back to Start</button>
+    <h2>Quiz Complete!</h2>
+    <p id="score-result"></p>
+    <div id="wrong-questions"></div>
+    <br>
+    <a href="index4.html" style="color: #00f0ff;">⬅️ Back to Periodic Table</a>
+  </div>
+  
+  <!-- अगला पार्ट नीचे आएगा... -->
+  <script>
+    // ---------------------- Element Data ------------------------
+    const elementData = [
+      { symbol: "H", name: "Hydrogen", number: 1, group: 1, mass: 1.008, valency: 1, use: "Fuel cells" },
+      { symbol: "He", name: "Helium", number: 2, group: 18, mass: 4.0026, valency: 0, use: "Balloons" },
+      { symbol: "Li", name: "Lithium", number: 3, group: 1, mass: 6.94, valency: 1, use: "Batteries" },
+      { symbol: "Be", name: "Beryllium", number: 4, group: 2, mass: 9.0122, valency: 2, use: "Aerospace" },
+      { symbol: "B", name: "Boron", number: 5, group: 13, mass: 10.81, valency: 3, use: "Fiberglass" },
+      { symbol: "C", name: "Carbon", number: 6, group: 14, mass: 12.011, valency: 4, use: "Organic compounds" },
+      { symbol: "N", name: "Nitrogen", number: 7, group: 15, mass: 14.007, valency: 3, use: "Fertilizers" },
+      { symbol: "O", name: "Oxygen", number: 8, group: 16, mass: 15.999, valency: 2, use: "Breathing" },
+      { symbol: "F", name: "Fluorine", number: 9, group: 17, mass: 18.998, valency: 1, use: "Toothpaste" },
+      { symbol: "Ne", name: "Neon", number: 10, group: 18, mass: 20.18, valency: 0, use: "Signs" },
+      {
+        symbol: "Na",
+        name: "Sodium",
+        number: 11,
+        group: 1,
+        mass: 22.990,
+        valency: 1,
+        use: "Salt"
+      },
+      {
+        symbol: "Mg",
+        name: "Magnesium",
+        number: 12,
+        group: 2,
+        mass: 24.305,
+        valency: 2,
+        use: "Fireworks"
+      },
+      {
+        symbol: "Al",
+        name: "Aluminum",
+        number: 13,
+        group: 13,
+        mass: 26.982,
+        valency: 3,
+        use: "Foil, Aircraft"
+      },
+      {
+        symbol: "Si",
+        name: "Silicon",
+        number: 14,
+        group: 14,
+        mass: 28.085,
+        valency: 4,
+        use: "Electronics"
+      },
+      {
+        symbol: "P",
+        name: "Phosphorus",
+        number: 15,
+        group: 15,
+        mass: 30.974,
+        valency: 3,
+        use: "Fertilizers"
+      },
+      {
+        symbol: "S",
+        name: "Sulfur",
+        number: 16,
+        group: 16,
+        mass: 32.06,
+        valency: 2,
+        use: "Gunpowder"
+      },
+      {
+        symbol: "Cl",
+        name: "Chlorine",
+        number: 17,
+        group: 17,
+        mass: 35.45,
+        valency: 1,
+        use: "Disinfectant"
+      },
+      {
+        symbol: "Ar",
+        name: "Argon",
+        number: 18,
+        group: 18,
+        mass: 39.948,
+        valency: 0,
+        use: "Light bulbs"
+      },
+      {
+        symbol: "K",
+        name: "Potassium",
+        number: 19,
+        group: 1,
+        mass: 39.098,
+        valency: 1,
+        use: "Fertilizers"
+      },
+      {
+        symbol: "Ca",
+        name: "Calcium",
+        number: 20,
+        group: 2,
+        mass: 40.078,
+        valency: 2,
+        use: "Bones, Cement"
+      },
+      {
+        symbol: "Sc",
+        name: "Scandium",
+        number: 21,
+        group: 3,
+        mass: 44.956,
+        valency: 3,
+        use: "Aerospace parts"
+      },
+      {
+        symbol: "Ti",
+        name: "Titanium",
+        number: 22,
+        group: 4,
+        mass: 47.867,
+        valency: 4,
+        use: "Aircraft, Medical Implants"
+      },
+      {
+        symbol: "V",
+        name: "Vanadium",
+        number: 23,
+        group: 5,
+        mass: 50.942,
+        valency: 5,
+        use: "Steel Alloys"
+      },
+      {
+        symbol: "Cr",
+        name: "Chromium",
+        number: 24,
+        group: 6,
+        mass: 51.996,
+        valency: 6,
+        use: "Stainless Steel"
+      },
+      {
+        symbol: "Mn",
+        name: "Manganese",
+        number: 25,
+        group: 7,
+        mass: 54.938,
+        valency: 7,
+        use: "Batteries, Steel"
+      },
+      {
+        symbol: "Fe",
+        name: "Iron",
+        number: 26,
+        group: 8,
+        mass: 55.845,
+        valency: 2,
+        use: "Construction, Blood"
+      },
+      {
+        symbol: "Co",
+        name: "Cobalt",
+        number: 27,
+        group: 9,
+        mass: 58.933,
+        valency: 2,
+        use: "Magnets, Batteries"
+      },
+      {
+        symbol: "Ni",
+        name: "Nickel",
+        number: 28,
+        group: 10,
+        mass: 58.693,
+        valency: 2,
+        use: "Coins, Stainless Steel"
+      },
+      {
+        symbol: "Cu",
+        name: "Copper",
+        number: 29,
+        group: 11,
+        mass: 63.546,
+        valency: 1,
+        use: "Wires, Electronics"
+      },
+      {
+        symbol: "Zn",
+        name: "Zinc",
+        number: 30,
+        group: 12,
+        mass: 65.38,
+        valency: 2,
+        use: "Galvanization"
+      },
+      {
+        symbol: "Ga",
+        name: "Gallium",
+        number: 31,
+        group: 13,
+        mass: 69.723,
+        valency: 3,
+        use: "Semiconductors"
+      },
+      {
+        symbol: "Ge",
+        name: "Germanium",
+        number: 32,
+        group: 14,
+        mass: 72.63,
+        valency: 4,
+        use: "Fiber Optics"
+      },
+      {
+        symbol: "As",
+        name: "Arsenic",
+        number: 33,
+        group: 15,
+        mass: 74.922,
+        valency: 3,
+        use: "Pesticides"
+      },
+      {
+        symbol: "Se",
+        name: "Selenium",
+        number: 34,
+        group: 16,
+        mass: 78.971,
+        valency: 2,
+        use: "Glass Coloring"
+      },
+      {
+        symbol: "Br",
+        name: "Bromine",
+        number: 35,
+        group: 17,
+        mass: 79.904,
+        valency: 1,
+        use: "Flame Retardants"
+      },
+      {
+        symbol: "Kr",
+        name: "Krypton",
+        number: 36,
+        group: 18,
+        mass: 83.798,
+        valency: 0,
+        use: "Lighting"
+      },
+      {
+        symbol: "Rb",
+        name: "Rubidium",
+        number: 37,
+        group: 1,
+        mass: 85.468,
+        valency: 1,
+        use: "Research"
+      },
+      {
+        symbol: "Sr",
+        name: "Strontium",
+        number: 38,
+        group: 2,
+        mass: 87.62,
+        valency: 2,
+        use: "Fireworks"
+      },
+      {
+        symbol: "Y",
+        name: "Yttrium",
+        number: 39,
+        group: 3,
+        mass: 88.906,
+        valency: 3,
+        use: "LEDs, Superconductors"
+      },
+      {
+        symbol: "Zr",
+        name: "Zirconium",
+        number: 40,
+        group: 4,
+        mass: 91.224,
+        valency: 4,
+        use: "Nuclear Reactors"
+      },
+      {
+        symbol: "Nb",
+        name: "Niobium",
+        number: 41,
+        group: 5,
+        mass: 92.906,
+        valency: 5,
+        use: "Steel Alloys"
+      },
+      {
+        symbol: "Mo",
+        name: "Molybdenum",
+        number: 42,
+        group: 6,
+        mass: 95.95,
+        valency: 6,
+        use: "High-strength Steel"
+      },
+      {
+        symbol: "Tc",
+        name: "Technetium",
+        number: 43,
+        group: 7,
+        mass: 98,
+        valency: 7,
+        use: "Medical Imaging"
+      },
+      {
+        symbol: "Ru",
+        name: "Ruthenium",
+        number: 44,
+        group: 8,
+        mass: 101.07,
+        valency: 4,
+        use: "Electronics"
+      },
+      {
+        symbol: "Rh",
+        name: "Rhodium",
+        number: 45,
+        group: 9,
+        mass: 102.91,
+        valency: 3,
+        use: "Catalytic Converters"
+      },
+      {
+        symbol: "Pd",
+        name: "Palladium",
+        number: 46,
+        group: 10,
+        mass: 106.42,
+        valency: 2,
+        use: "Jewelry, Catalysts"
+      },
+      {
+        symbol: "Ag",
+        name: "Silver",
+        number: 47,
+        group: 11,
+        mass: 107.87,
+        valency: 1,
+        use: "Coins, Jewelry"
+      },
+      {
+        symbol: "Cd",
+        name: "Cadmium",
+        number: 48,
+        group: 12,
+        mass: 112.41,
+        valency: 2,
+        use: "Batteries"
+      },
+      {
+        symbol: "In",
+        name: "Indium",
+        number: 49,
+        group: 13,
+        mass: 114.82,
+        valency: 3,
+        use: "Touchscreens"
+      },
+      {
+        symbol: "Sn",
+        name: "Tin",
+        number: 50,
+        group: 14,
+        mass: 118.71,
+        valency: 4,
+        use: "Cans, Alloys"
+      },
+      {
+        symbol: "Sb",
+        name: "Antimony",
+        number: 51,
+        group: 15,
+        mass: 121.76,
+        valency: 3,
+        use: "Flame Retardants"
+      },
+      {
+        symbol: "Te",
+        name: "Tellurium",
+        number: 52,
+        group: 16,
+        mass: 127.6,
+        valency: 2,
+        use: "Thermoelectric Devices"
+      },
+      {
+        symbol: "I",
+        name: "Iodine",
+        number: 53,
+        group: 17,
+        mass: 126.90,
+        valency: 1,
+        use: "Disinfectants"
+      },
+      {
+        symbol: "Xe",
+        name: "Xenon",
+        number: 54,
+        group: 18,
+        mass: 131.29,
+        valency: 0,
+        use: "Lighting"
+      },
+      {
+        symbol: "Cs",
+        name: "Cesium",
+        number: 55,
+        group: 1,
+        mass: 132.91,
+        valency: 1,
+        use: "Atomic Clocks"
+      },
+      {
+        symbol: "Ba",
+        name: "Barium",
+        number: 56,
+        group: 2,
+        mass: 137.33,
+        valency: 2,
+        use: "X-ray Imaging"
+      },
+      {
+        symbol: "La",
+        name: "Lanthanum",
+        number: 57,
+        group: 3,
+        mass: 138.91,
+        valency: 3,
+        use: "Camera Lenses"
+      },
+      {
+        symbol: "Ce",
+        name: "Cerium",
+        number: 58,
+        group: "Lanthanide",
+        mass: 140.12,
+        valency: 4,
+        use: "Glass Polishing"
+      },
+      {
+        symbol: "Pr",
+        name: "Praseodymium",
+        number: 59,
+        group: "Lanthanide",
+        mass: 140.91,
+        valency: 3,
+        use: "Magnets"
+      },
+      {
+        symbol: "Nd",
+        name: "Neodymium",
+        number: 60,
+        group: "Lanthanide",
+        mass: 144.24,
+        valency: 3,
+        use: "Powerful Magnets"
+      },
+      {
+        symbol: "Pm",
+        name: "Promethium",
+        number: 61,
+        group: "Lanthanide",
+        mass: 145,
+        valency: 3,
+        use: "Nuclear Batteries"
+      },
+      {
+        symbol: "Sm",
+        name: "Samarium",
+        number: 62,
+        group: "Lanthanide",
+        mass: 150.36,
+        valency: 3,
+        use: "Magnets"
+      },
+      {
+        symbol: "Eu",
+        name: "Europium",
+        number: 63,
+        group: "Lanthanide",
+        mass: 151.96,
+        valency: 3,
+        use: "TV Screens"
+      },
+      {
+        symbol: "Gd",
+        name: "Gadolinium",
+        number: 64,
+        group: "Lanthanide",
+        mass: 157.25,
+        valency: 3,
+        use: "MRI Contrast Agents"
+      },
+      {
+        symbol: "Tb",
+        name: "Terbium",
+        number: 65,
+        group: "Lanthanide",
+        mass: 158.93,
+        valency: 3,
+        use: "Green Phosphors"
+      },
+      {
+        symbol: "Dy",
+        name: "Dysprosium",
+        number: 66,
+        group: "Lanthanide",
+        mass: 162.50,
+        valency: 3,
+        use: "Lasers"
+      },
+      {
+        symbol: "Ho",
+        name: "Holmium",
+        number: 67,
+        group: "Lanthanide",
+        mass: 164.93,
+        valency: 3,
+        use: "Magnetic Fields"
+      },
+      {
+        symbol: "Er",
+        name: "Erbium",
+        number: 68,
+        group: "Lanthanide",
+        mass: 167.26,
+        valency: 3,
+        use: "Fiber Optics"
+      },
+      {
+        symbol: "Tm",
+        name: "Thulium",
+        number: 69,
+        group: "Lanthanide",
+        mass: 168.93,
+        valency: 3,
+        use: "Portable X-ray"
+      },
+      {
+        symbol: "Yb",
+        name: "Ytterbium",
+        number: 70,
+        group: "Lanthanide",
+        mass: 173.04,
+        valency: 2,
+        use: "Atomic Clocks"
+      },
+      {
+        symbol: "Lu",
+        name: "Lutetium",
+        number: 71,
+        group: "Lanthanide",
+        mass: 174.97,
+        valency: 3,
+        use: "Catalysts"
+      },
+      {
+        symbol: "Hf",
+        name: "Hafnium",
+        number: 72,
+        group: 4,
+        mass: 178.49,
+        valency: 4,
+        use: "Nuclear Reactors"
+      },
+      {
+        symbol: "Ta",
+        name: "Tantalum",
+        number: 73,
+        group: 5,
+        mass: 180.95,
+        valency: 5,
+        use: "Electronics"
+      },
+      {
+        symbol: "W",
+        name: "Tungsten",
+        number: 74,
+        group: 6,
+        mass: 183.84,
+        valency: 6,
+        use: "Light Bulbs"
+      },
+      {
+        symbol: "Re",
+        name: "Rhenium",
+        number: 75,
+        group: 7,
+        mass: 186.21,
+        valency: 7,
+        use: "Jet Engines"
+      },
+      {
+        symbol: "Os",
+        name: "Osmium",
+        number: 76,
+        group: 8,
+        mass: 190.23,
+        valency: 4,
+        use: "Fountain Pens"
+      },
+      {
+        symbol: "Ir",
+        name: "Iridium",
+        number: 77,
+        group: 9,
+        mass: 192.22,
+        valency: 4,
+        use: "Spark Plugs"
+      },
+      {
+        symbol: "Pt",
+        name: "Platinum",
+        number: 78,
+        group: 10,
+        mass: 195.08,
+        valency: 2,
+        use: "Jewelry"
+      },
+      {
+        symbol: "Au",
+        name: "Gold",
+        number: 79,
+        group: 11,
+        mass: 196.97,
+        valency: 1,
+        use: "Jewelry"
+      },
+      {
+        symbol: "Hg",
+        name: "Mercury",
+        number: 80,
+        group: 12,
+        mass: 200.59,
+        valency: 2,
+        use: "Thermometers"
+      },
+      {
+        symbol: "Tl",
+        name: "Thallium",
+        number: 81,
+        group: 13,
+        mass: 204.38,
+        valency: 3,
+        use: "Electronics"
+      },
+      {
+        symbol: "Pb",
+        name: "Lead",
+        number: 82,
+        group: 14,
+        mass: 207.2,
+        valency: 4,
+        use: "Batteries"
+      },
+      {
+        symbol: "Bi",
+        name: "Bismuth",
+        number: 83,
+        group: 15,
+        mass: 208.98,
+        valency: 3,
+        use: "Medications"
+      },
+      {
+        symbol: "Po",
+        name: "Polonium",
+        number: 84,
+        group: 16,
+        mass: 209,
+        valency: 2,
+        use: "Nuclear Batteries"
+      },
+      {
+        symbol: "At",
+        name: "Astatine",
+        number: 85,
+        group: 17,
+        mass: 210,
+        valency: 1,
+        use: "Research"
+      },
+      {
+        symbol: "Rn",
+        name: "Radon",
+        number: 86,
+        group: 18,
+        mass: 222,
+        valency: 0,
+        use: "Radiotherapy"
+      },
+      {
+        symbol: "Fr",
+        name: "Francium",
+        number: 87,
+        group: 1,
+        mass: 223,
+        valency: 1,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Ra",
+        name: "Radium",
+        number: 88,
+        group: 2,
+        mass: 226,
+        valency: 2,
+        use: "Cancer Treatment"
+      },
+      {
+        symbol: "Ac",
+        name: "Actinium",
+        number: 89,
+        group: "Actinide",
+        mass: 227,
+        valency: 3,
+        use: "Radiotherapy"
+      },
+      {
+        symbol: "Th",
+        name: "Thorium",
+        number: 90,
+        group: "Actinide",
+        mass: 232.04,
+        valency: 4,
+        use: "Nuclear Fuel"
+      },
+      {
+        symbol: "Pa",
+        name: "Protactinium",
+        number: 91,
+        group: "Actinide",
+        mass: 231.04,
+        valency: 5,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "U",
+        name: "Uranium",
+        number: 92,
+        group: "Actinide",
+        mass: 238.03,
+        valency: 6,
+        use: "Nuclear Fuel"
+      },
+      {
+        symbol: "Np",
+        name: "Neptunium",
+        number: 93,
+        group: "Actinide",
+        mass: 237,
+        valency: 5,
+        use: "Nuclear Reactors"
+      },
+      {
+        symbol: "Pu",
+        name: "Plutonium",
+        number: 94,
+        group: "Actinide",
+        mass: 244,
+        valency: 4,
+        use: "Nuclear Weapons & Reactors"
+      },
+      {
+        symbol: "Am",
+        name: "Americium",
+        number: 95,
+        group: "Actinide",
+        mass: 243,
+        valency: 3,
+        use: "Smoke Detectors"
+      },
+      {
+        symbol: "Cm",
+        name: "Curium",
+        number: 96,
+        group: "Actinide",
+        mass: 247,
+        valency: 3,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Bk",
+        name: "Berkelium",
+        number: 97,
+        group: "Actinide",
+        mass: 247,
+        valency: 3,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Cf",
+        name: "Californium",
+        number: 98,
+        group: "Actinide",
+        mass: 251,
+        valency: 3,
+        use: "Neutron Source"
+      },
+      {
+        symbol: "Es",
+        name: "Einsteinium",
+        number: 99,
+        group: "Actinide",
+        mass: 252,
+        valency: 3,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Fm",
+        name: "Fermium",
+        number: 100,
+        group: "Actinide",
+        mass: 257,
+        valency: 3,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Md",
+        name: "Mendelevium",
+        number: 101,
+        group: "Actinide",
+        mass: 258,
+        valency: 3,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "No",
+        name: "Nobelium",
+        number: 102,
+        group: "Actinide",
+        mass: 259,
+        valency: 2,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Lr",
+        name: "Lawrencium",
+        number: 103,
+        group: "Actinide",
+        mass: 262,
+        valency: 3,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Rf",
+        name: "Rutherfordium",
+        number: 104,
+        group: 4,
+        mass: 267,
+        valency: 4,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Db",
+        name: "Dubnium",
+        number: 105,
+        group: 5,
+        mass: 268,
+        valency: 5,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Sg",
+        name: "Seaborgium",
+        number: 106,
+        group: 6,
+        mass: 269,
+        valency: 6,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Bh",
+        name: "Bohrium",
+        number: 107,
+        group: 7,
+        mass: 270,
+        valency: 7,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Hs",
+        name: "Hassium",
+        number: 108,
+        group: 8,
+        mass: 277,
+        valency: 8,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Mt",
+        name: "Meitnerium",
+        number: 109,
+        group: 9,
+        mass: 278,
+        valency: "Unknown",
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Ds",
+        name: "Darmstadtium",
+        number: 110,
+        group: 10,
+        mass: 281,
+        valency: "Unknown",
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Rg",
+        name: "Roentgenium",
+        number: 111,
+        group: 11,
+        mass: 282,
+        valency: "Unknown",
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Cn",
+        name: "Copernicium",
+        number: 112,
+        group: 12,
+        mass: 285,
+        valency: 2,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Nh",
+        name: "Nihonium",
+        number: 113,
+        group: 13,
+        mass: 286,
+        valency: 1,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Fl",
+        name: "Flerovium",
+        number: 114,
+        group: 14,
+        mass: 289,
+        valency: 2,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Mc",
+        name: "Moscovium",
+        number: 115,
+        group: 15,
+        mass: 290,
+        valency: 3,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Lv",
+        name: "Livermorium",
+        number: 116,
+        group: 16,
+        mass: 293,
+        valency: 2,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Ts",
+        name: "Tennessine",
+        number: 117,
+        group: 17,
+        mass: 294,
+        valency: 1,
+        use: "Scientific Research"
+      },
+      {
+        symbol: "Og",
+        name: "Oganesson",
+        number: 118,
+        group: 18,
+        mass: 294,
+        valency: 0,
+        use: "Scientific Research"
+      }
+      // 🔔 NOTE: फिलहाल 10 element रखे हैं demo के लिए। तुम full 118 भी रख सकते हो।
+    ];
+    
+    // ---------------------- Quiz Logic ------------------------
+    let selectedElements = [];
+    let currentIndex = 0;
+    let score = 0;
+    let wrongAnswers = [];
+    
+    const startBtn = document.getElementById("start-btn");
+    const rangeSelector = document.getElementById("range-selector");
+    const quizContainer = document.getElementById("quiz-container");
+    const questionText = document.getElementById("question-text");
+    const optionsContainer = document.getElementById("options-container");
+    const questionCount = document.getElementById("question-count");
+    const resultBox = document.getElementById("result-box");
+    const scoreResult = document.getElementById("score-result");
+    const wrongQuestionsDiv = document.getElementById("wrong-questions");
+    
+    startBtn.addEventListener("click", () => {
+      const range = rangeSelector.value.split("-");
+      const start = parseInt(range[0]);
+      const end = parseInt(range[1]);
+      selectedElements = elementData.filter(el => el.number >= start && el.number <= end);
+      
+      document.getElementById("start-screen").style.display = "none";
+      quizContainer.style.display = "block";
+      
+      currentIndex = 0;
+      score = 0;
+      wrongAnswers = [];
+      
+      askQuestion();
+    });
+    
+    function askQuestion() {
+      if (currentIndex >= selectedElements.length) {
+        quizContainer.style.display = "none";
+        resultBox.style.display = "block";
+        scoreResult.innerText = `Your Score: ${score} / ${selectedElements.length}`;
+        if (wrongAnswers.length > 0) {
+          wrongQuestionsDiv.innerHTML = `<h3>Wrong Answers:</h3><ul>` + wrongAnswers.map(q => `<li>${q}</li>`).join("") + `</ul>`;
+        } else {
+          wrongQuestionsDiv.innerHTML = `<p>🎉 All answers correct!</p>`;
+        }
+        return;
+      }
+      
+      const currentElement = selectedElements[currentIndex];
+      const questionTypes = [
+        `What is the symbol of ${currentElement.name}?`,
+        `What element has the symbol "${currentElement.symbol}"?`,
+        `Which element has atomic number ${currentElement.number}?`,
+        `What is the valency of ${currentElement.name}?`,
+        `What is the use of ${currentElement.name}?`,
+        `What is the atomic number of ${currentElement.name}?`, // ✅ NEW
+        `What is the atomic mass of ${currentElement.name}?` // ✅ NEW
+      ];
+      
+      const typeIndex = Math.floor(Math.random() * questionTypes.length);
+      const question = questionTypes[typeIndex];
+      
+      let correctAnswer = "";
+      switch (typeIndex) {
+        case 0:
+          correctAnswer = currentElement.symbol;
+          break;
+        case 1:
+          correctAnswer = currentElement.name;
+          break;
+        case 2:
+          correctAnswer = currentElement.name;
+          break;
+        case 3:
+          correctAnswer = currentElement.valency.toString();
+          break;
+        case 4:
+          correctAnswer = currentElement.use;
+          break;
+        case 5:
+          correctAnswer = currentElement.number.toString();
+          break; // ✅
+        case 6:
+          correctAnswer = currentElement.mass.toString();
+          break; // ✅
+      }
+      
+      const options = generateOptions(correctAnswer, typeIndex);
+      renderQuestion(question, options, correctAnswer);
+    }
+    
+    function generateOptions(correct, typeIndex) {
+      let pool = [];
+      switch (typeIndex) {
+        case 0:
+          pool = elementData.map(e => e.symbol);
+          break;
+        case 1:
+        case 2:
+        case 5:
+          pool = elementData.map(e => e.name);
+          break;
+        case 3:
+          pool = [...new Set(elementData.map(e => e.valency.toString()))];
+          break;
+        case 4:
+          pool = elementData.map(e => e.use);
+          break;
+        case 5:
+          pool = elementData.map(e => e.number.toString());
+          break;
+        case 6:
+          pool = elementData.map(e => e.mass.toString());
+          break;
+      }
+      
+      pool = pool.filter(item => item !== correct);
+      const randomOptions = [correct, ...shuffle(pool).slice(0, 3)];
+      return shuffle(randomOptions);
+    }
+    
+    function renderQuestion(question, options, correctAnswer) {
+      questionText.innerText = question;
+      questionCount.innerText = `Question ${currentIndex + 1} of ${selectedElements.length}`;
+      optionsContainer.innerHTML = "";
+      
+      options.forEach(opt => {
+        const btn = document.createElement("button");
+        btn.className = "option-btn";
+        btn.innerText = opt;
+        btn.onclick = () => {
+          if (opt === correctAnswer) {
+            btn.classList.add("correct");
+            score++;
+          } else {
+            btn.classList.add("wrong");
+            wrongAnswers.push(`${question} Correct: ${correctAnswer}`);
+          }
+          
+          // Disable all buttons
+          document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
+          
+          setTimeout(() => {
+            currentIndex++;
+            askQuestion();
+          }, 1200);
+        };
+        optionsContainer.appendChild(btn);
+      });
+    }
+    
+    function shuffle(array) {
+      return array.sort(() => Math.random() - 0.5);
+    }
+    // ✅ Back buttons
+    document.getElementById("backToStartFromQuiz").addEventListener("click", () => {
+      quizContainer.style.display = "none";
+      document.getElementById("start-screen").style.display = "block";
+    });
+    
+    document.getElementById("backToStartFromResult").addEventListener("click", () => {
+      resultBox.style.display = "none";
+      document.getElementById("start-screen").style.display = "block";
+    });
+  </script>

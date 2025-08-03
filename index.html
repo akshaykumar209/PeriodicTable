@@ -1,0 +1,2105 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Periodic Table Explorer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    
+    html,
+    body {
+      height: 100vh;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      background-color: #111;
+      color: #fff;
+    }
+    
+    header {
+      background: #1e1e1e;
+      border-bottom: 1px solid #333;
+      padding: 1rem;
+      text-align: center;
+    }
+    
+    .mode-buttons {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    
+    .mode-buttons button {
+      padding: 8px 16px;
+      background: #0ff;
+      color: #000;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s;
+    }
+    
+    .mode-buttons button:hover {
+      background: #fff;
+    }
+    
+    #closeAbout {
+      padding: 8px 16px;
+      background: #0ff;
+      color: #000;
+      font-weight: bold;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      transition: 0.3s;
+      margin: 10px;
+    }
+    
+    main {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 10px;
+    }
+    
+    main {
+      padding-bottom: 60px;
+    }
+    
+    footer {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      background: #333;
+      color: white;
+      text-align: center;
+      padding: 10px;
+      z-index: 999;
+    }
+    
+    .mode-section {
+      display: none;
+    }
+    
+    .mode-section.active {
+      display: block;
+    }
+    
+    .table-container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    
+    .element {
+      background: #222;
+      color: #0ff;
+      border: 2px solid #444;
+      border-radius: 10px;
+      width: 70px;
+      height: 90px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    
+    .element:hover {
+      background: #0ff;
+      color: #000;
+      transform: scale(1.1);
+    }
+    
+    .info-box {
+      background: #1a1a1a;
+      padding: 15px;
+      border-radius: 10px;
+      border: 1px solid #444;
+      margin: 20px auto;
+      max-width: 400px;
+    }
+    
+    .guess-container {
+      text-align: center;
+      background: #222;
+      padding: 30px;
+      margin: 20px auto;
+      border-radius: 10px;
+      max-width: 400px;
+    }
+    
+    #symbolBox {
+      font-size: 50px;
+      font-weight: bold;
+      color: #0ff;
+      margin-bottom: 20px;
+    }
+    
+    #userGuess {
+      padding: 10px;
+      width: 80%;
+      max-width: 300px;
+      margin-bottom: 10px;
+      font-size: 16px;
+      color: white;
+      background: #000;
+      border: 1px solid #0ff;
+      border-radius: 5px;
+    }
+    
+    #checkBtn {
+      padding: 10px 20px;
+      background: #0ff;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    
+    #feedback {
+      margin-top: 10px;
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    #aboutSection {
+      background-color: #111;
+      color: white;
+      padding: 20px;
+      margin: 20px auto;
+      border-radius: 10px;
+      box-shadow: 0 0 10px #38bdf8;
+      max-width: 600px;
+    }
+    
+    
+    
+    @media (max-width: 576px) {
+      .element {
+        width: 50px;
+        height: 50px;
+        font-size: 16px;
+      }
+    }
+    
+    @media (min-width: 577px) and (max-width: 768px) {
+      .element {
+        width: 60px;
+        height: 60px;
+        font-size: 18px;
+      }
+    }
+    
+    .element {
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      font-size: 22px;
+      padding: 5px;
+    }
+    
+    .symbol {
+      font-size: 22px;
+      font-weight: bold;
+    }
+    
+    .element-name {
+      font-size: 10px;
+      color: #aaa;
+      margin-top: 2px;
+      text-align: center;
+    }
+    
+    .element {
+      width: 80px;
+      height: auto;
+      border: 2px solid #fff;
+      padding: 8px;
+      margin: 3px;
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      transition: transform 0.3s, box-shadow 0.3s;
+      overflow-wrap: break-word;
+      word-wrap: break-word;
+      white-space: normal;
+      box-sizing: border-box;
+    }
+    
+    .element:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 15px #fff;
+    }
+    
+    .element-name {
+      white-space: normal;
+      overflow-wrap: break-word;
+    }
+    
+    .container {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      /* या space-between, as you like */
+    }
+    
+    /* ✅ LG Screens (1024px and up) */
+    @media screen and (min-width: 1024px) and (max-width: 1279px) {
+      .element-container {
+        display: block;
+        width: 100%;
+      }
+      
+      .below-text {
+        display: block;
+        margin-top: 20px;
+        width: 100%;
+        text-align: center;
+      }
+    }
+    
+    /* ✅ XL Screens (1280px and up) */
+    @media screen and (min-width: 1280px) {
+      .element-container {
+        display: block;
+        width: 100%;
+      }
+      
+      .below-text {
+        display: block;
+        margin-top: 20px;
+        width: 100%;
+        text-align: center;
+      }
+    }
+    
+    #center {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+    }
+    
+    .hard {
+      display: flex;
+      text-align: center;
+      align-items: center;
+      justify-content: center;
+      background: #00f0ff;
+      color: black;
+      padding: 12px 24px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 10px;
+      text-decoration: none;
+      margin: 20px 10px;
+    }
+    
+    .quiz-btn:hover {
+      background: #fff;
+      color: #000;
+      box-shadow: 0 0 25px #00f0ff, 0 0 40px #00f0ff;
+    }
+    
+    .quiz-warning {
+      background: #1a1a1a;
+      border: 2px solid #00ffff;
+      color: #ffffff;
+      padding: 15px 20px;
+      border-radius: 10px;
+      margin: 20px auto;
+      max-width: 700px;
+      font-size: 16px;
+      line-height: 1.6;
+      box-shadow: 0 0 10px #00ffff88;
+      text-align: center;
+    }
+    
+    .quiz-warning p {
+      margin-bottom: 10px;
+    }
+    
+    .about-wrapper {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background: linear-gradient(145deg, #141414, #1a1a1a);
+      border-radius: 20px;
+      box-shadow: 0 0 20px #00ffff55;
+      color: #fff;
+      text-align: center;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    
+    .about-heading {
+      font-size: 32px;
+      margin-bottom: 30px;
+      color: #00ffff;
+      text-shadow: 0 0 10px #00ffffaa;
+    }
+    
+    .about-cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+    }
+    
+    .card {
+      background: #222;
+      padding: 20px;
+      border-radius: 15px;
+      width: 280px;
+      box-shadow: 0 0 15px #00ffff33;
+      transition: 0.3s ease-in-out;
+      text-align: left;
+    }
+    
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 0 25px #00ffff88;
+    }
+    
+    .card h3 {
+      color: #00ffff;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #00ffff55;
+      padding-bottom: 5px;
+      font-size: 18px;
+    }
+    
+    .card ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    .card li {
+      margin-bottom: 10px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+    
+    .card .label {
+      font-weight: bold;
+      /*color: #00faff;
+      text-shadow: 0 0 6px #00faff88;*/
+      background: linear-gradient(90deg, #00ffff, #a64ac9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      font-weight: bold;
+      
+    }
+    
+    .card .ans {
+      color: #d4f1ff;
+      font-style: italic;
+      font-weight: 700;
+      margin-left: 5px;
+      transition: color 0.3s;
+    }
+    
+    .card .ans:hover {
+      color: #ffffff;
+      text-shadow: 0 0 8px #ffffffaa;
+    }
+    
+    #closeAbout {
+      margin-top: 30px;
+      padding: 12px 24px;
+      font-size: 16px;
+      background: #00ffff;
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      box-shadow: 0 0 12px #00ffff88;
+      transition: background 0.3s ease;
+    }
+    
+    #closeAbout:hover {
+      background: #00cccc;
+    }
+    
+    @media (max-width: 768px) {
+      .card {
+        width: 90%;
+      }
+      
+      .about-cards {
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .about-wrapper {
+        padding: 50px 60px;
+      }
+      
+      .about-heading {
+        font-size: 38px;
+        margin-bottom: 40px;
+      }
+      
+      .card {
+        width: 320px;
+        padding: 25px;
+        font-size: 17px;
+      }
+      
+      .card h3 {
+        font-size: 22px;
+      }
+      
+      .card li {
+        font-size: 16px;
+        line-height: 1.7;
+      }
+      
+      #closeAbout {
+        font-size: 18px;
+        padding: 14px 30px;
+      }
+    }
+    
+    @media (min-width: 1280px) {
+      .about-wrapper {
+        max-width: 1500px;
+        padding: 60px 80px;
+      }
+      
+      .card {
+        width: 360px;
+        padding: 30px;
+      }
+      
+      .card h3 {
+        font-size: 24px;
+      }
+      
+      .card li {
+        font-size: 17px;
+      }
+      
+      .card .ans {
+        font-size: 18px;
+      }
+      
+      #closeAbout {
+        font-size: 20px;
+        padding: 16px 36px;
+      }
+    }
+    
+    .element-note {
+      background: #1a1a1a;
+      border-left: 5px solid #00ffff;
+      color: #ffffff;
+      padding: 15px 20px;
+      border-radius: 8px;
+      margin: 20px auto;
+      max-width: 800px;
+      font-size: 16px;
+      line-height: 1.6;
+      box-shadow: 0 0 12px #00ffff88;
+      font-family: 'Segoe UI', sans-serif;
+    }
+    
+    .element-note b {
+      color: #00ffff;
+    }
+    
+    .element-note u {
+      text-decoration-color: #00ffff;
+      text-underline-offset: 4px;
+    }
+  </style>
+</head>
+
+<body>
+  
+  <header>
+    <h2>🔬The Periodic World 🧪 </h2>
+    <div class="mode-buttons">
+      <button id="explorerBtn">Teable</button>
+      <button id="guessBtn">Play & Learn</button>
+      <button id="aboutBtn">About Me</button>
+    </div>
+  </header>
+  
+  <main>
+    <!-- Explorer Mode -->
+    
+    <section id="explorerMode" class="mode-section active">
+      <div id="center">
+        <section style="max-width: 900px; margin: 30px auto; padding: 25px; background: linear-gradient(135deg, #2c3e50, #34495e); border-radius: 12px; box-shadow: 0 6px 20px rgba(0,0,0,0.3);">
+          <h2 style="text-align: center; color: #ffffff; font-size: 30px; margin-bottom: 20px;">History of the Periodic Table</h2>
+          <p style="font-size: 18px; color: #f8f8f8; line-height: 1.8; text-align: justify;">
+            The Periodic Table was first created by <strong>Dmitri Mendeleev</strong> in 1869. He arranged the elements by their <strong>atomic mass</strong> and properties.
+            Later, <strong>Henry Moseley</strong> revised it based on <strong>atomic number</strong>, which gave rise to the modern Periodic Table.
+            Today, it contains <strong>118 elements</strong>, arranged by their chemical properties and <strong>electronic configuration</strong>.
+            The Periodic Table helps scientists and students understand elements in a clear and logical way.
+          </p>
+          <h2 style="text-align: center; font-size: 28px; margin-bottom: 15px; margin-top:15px;">आवर्त सारणी का इतिहास</h2>
+          <p style="font-size: 18px;line-height: 1.7; text-align: justify;">
+            आवर्त सारणी की शुरुआत <strong>दिमित्री मेंडलीव</strong> ने 1869 में की थी। उन्होंने तत्वों को उनके <strong>परमाणु द्रव्यमान</strong> और गुणों के आधार पर सजाया।
+            बाद में, <strong>हेनरी मोस्ले</strong> ने इसे <strong>परमाणु क्रमांक (Atomic Number)</strong> के अनुसार व्यवस्थित किया, जिससे आधुनिक आवर्त सारणी बनी।
+            आज की आवर्त सारणी में कुल <strong>118 तत्व</strong> हैं, जिन्हें उनके रासायनिक गुणों और इलेक्ट्रॉन विन्यास के अनुसार समूहों और आवर्तों में बाँटा गया है।
+            यह तालिका वैज्ञानिकों और छात्रों के लिए रासायनिक तत्वों को समझने का सबसे आसान और शक्तिशाली तरीका है।
+          </p>
+          <div class="quiz-warning">
+            <a href="/PeriodicTable /hardQuiz.html" class="hard">Hard Quiz</a>
+            <p>💡 This is a hard quiz👆 — please learn the full Periodic Table before you play.👇
+            <div class="element-note">
+              🔔 <b>Note: Click on any element to view its full details.
+            </div>
+            </p>
+            <p>💡 यह एक Hard Quiz है👆— खेलने से पहले पूरा Periodic Table याद कर लें।👇
+            <div class="element-note">
+              🔔 <b>नोट: किसी भी तत्व पर क्लिक करके आप उसकी पूरी जानकारी देख सकते हैं।
+            </div>
+            </p>
+            
+            
+          </div>
+          
+        </section>
+        
+        
+        
+      </div>
+      <div class="table-container" id="tableContainer"></div>
+      
+    </section>
+    
+    <div id="infoContainer" class="info-box" style="display:none;">
+      <h2 style="color:#00faff; margin:0 0 5px 0">Element Details</h2>
+      <p><strong>Name:</strong> <span id="elName">-</span></p>
+      <p><strong>Symbol:</strong> <span id="elSymbol">-</span></p>
+      <p><strong>Atomic Number:</strong> <span id="elNumber">-</span></p>
+      <p><strong>Group:</strong> <span id="elGroup">-</span></p>
+      <p><strong>Mass:</strong> <span id="elMass">-</span></p>
+      <p><strong>Valency:</strong> <span id="elValency">-</span></p>
+      <p><strong>Use:</strong> <span id="elUse">-</span></p>
+      <br>
+      <button onclick="goBack()" style="padding:10px 20px;background:#0ff;border:none;border-radius:5px;font-weight:bold;">🔙 Back</button>
+    </div>
+    
+    </section>
+    
+    <!-- Guess Mode -->
+    <section id="guessMode" class="mode-section">
+      <div class="guess-container">
+        <h2>Guess the Element Name</h2>
+        <div id="symbolBox"></div>
+        <input type="text" id="userGuess" placeholder="Enter element name...">
+        <button id="checkBtn">Check</button>
+        <p id="feedback"></p>
+        <p>Score: <span id="score">0</span></p>
+      </div>
+    </section>
+    <section id="aboutSection" style="display: none;">
+      <div class="about-wrapper">
+        <h2 class="about-heading">👨‍💻 About Akshay Kumar</h2>
+        
+        <div class="about-cards">
+          
+          <div class="card">
+            <h3>📘 Personal Details</h3>
+            <ul>
+              <li><span class="label">Name:</span> <span class="ans">Akshay Kumar</span></li>
+              <li><span class="label">Education:</span> <span class="ans">11th Grade, S.D. Inter College, Muzaffarnagar</span></li>
+              <li><span class="label">Mother:</span> <span class="ans">Mrs. Sushma</span></li>
+              <li><span class="label">Father:</span> <span class="ans">Mr. Dheeraj</span></li>
+              <li><span class="label">Siblings:</span> <span class="ans">I have two sisters</span></li>
+            </ul>
+          </div>
+          
+          <div class="card">
+            <h3>💡 Coding Journey</h3>
+            <ul>
+              <li><span class="label">Introduced by:</span> <span class="ans">My school</span></li>
+              <li><span class="label">Started:</span> <span class="ans">During web development studies</span></li>
+              <li><span class="label">First Learned:</span> <span class="ans">HTML, CSS, JavaScript</span></li>
+            </ul>
+          </div>
+          
+          <div class="card">
+            <h3>🌐 CodeYogi Experience</h3>
+            <ul>
+              <li><span class="label">Joined:</span> <span class="ans">2 August 2024</span></li>
+              <li><span class="label">Learned:</span> <span class="ans">HTML, CSS, JavaScript</span></li>
+            </ul>
+          </div>
+          
+          <div class="card">
+            <h3>🏆 Achievements</h3>
+            <ul>
+              <li><span class="label">Competitions:</span> <span class="ans">Wordle</span></li>
+              <li><span class="label">Awards:</span> <span class="ans">None</span></li>
+            </ul>
+          </div>
+          
+          <div class="card">
+            <h3>🚀 Future Goals</h3>
+            <ul>
+              <li><span class="label">Career:</span> <span class="ans">Software Developer</span></li>
+              <li><span class="label">Reason:</span> <span class="ans">Love creating innovative solutions</span></li>
+            </ul>
+          </div>
+          
+        </div>
+        
+        <button id="closeAbout">🔙 Close</button>
+      </div>
+    </section>
+    
+    <!-- About Section -->
+    <!--<section id="aboutSection" style="display: none;">
+      <div class="about-content">
+        <h2>About Me</h2>
+        <p>Hi, I'm Akshay — a web developer passionate about science, coding, and building fun learning tools. 🌟</p>
+        <button id="closeAbout">🔙 Close</button>
+      </div>
+      
+    </section>-->
+    <!-- 🔥 Quiz Game Mode -->
+    <section id="quizMode" class="mode-section" style="display:none;">
+      <h2 id="quiz-question"></h2>
+      <div id="quiz-options"></div>
+    </section>
+    
+  </main>
+  <footer id="footer">
+    <p>🌟 Developed by AKSHAY</p>
+    
+  </footer>
+  
+  
+  <script>
+    const explorerBtn = document.getElementById('explorerBtn');
+    const guessBtn = document.getElementById('guessBtn');
+    const aboutBtn = document.getElementById('aboutBtn');
+    const closeAbout = document.getElementById('closeAbout');
+    
+    const explorerMode = document.getElementById('explorerMode');
+    const guessMode = document.getElementById('guessMode');
+    const aboutSection = document.getElementById('aboutSection');
+    const infoContainer = document.getElementById('infoContainer');
+    const tableContainer = document.querySelector('.table-container');
+    
+    let currentMode = 'explorer';
+    let selectedElement = null;
+    
+    explorerBtn.addEventListener('click', () => {
+      currentMode = 'explorer';
+      showSection(explorerMode);
+    });
+    
+    guessBtn.addEventListener('click', () => {
+      currentMode = 'game';
+      showSection(guessMode);
+    });
+    
+    aboutBtn.addEventListener('click', () => {
+      if (currentMode === 'about') {
+        aboutSection.style.display = 'none';
+        showSection(explorerMode);
+        currentMode = 'explorer';
+      } else {
+        hideAllSections();
+        aboutSection.style.display = 'block';
+        currentMode = 'about';
+      }
+    });
+    
+    closeAbout.addEventListener('click', () => {
+      aboutSection.style.display = 'none';
+      showSection(explorerMode);
+      currentMode = 'explorer';
+    });
+    
+    const elements = document.querySelectorAll('.element');
+    elements.forEach(el => {
+      el.addEventListener('click', () => {
+        if (selectedElement === el) {
+          infoContainer.style.display = 'none';
+          tableContainer.style.display = 'flex';
+          selectedElement = null;
+        } else {
+          document.getElementById('elName').textContent = el.dataset.name;
+          document.getElementById('elSymbol').textContent = el.dataset.symbol;
+          document.getElementById('elNumber').textContent = el.dataset.number;
+          document.getElementById('elGroup').textContent = el.dataset.group;
+          document.getElementById('elMass').textContent = el.dataset.mass;
+          document.getElementById('elValency').textContent = el.dataset.valency;
+          document.getElementById('elUse').textContent = el.dataset.use;
+          
+          tableContainer.style.display = 'none';
+          infoContainer.style.display = 'block';
+          selectedElement = el;
+        }
+      });
+    });
+    
+    function goBack() {
+      infoContainer.style.display = 'none';
+      tableContainer.style.display = 'flex';
+      selectedElement = null;
+    }
+    
+    function showSection(section) {
+      hideAllSections();
+      section.classList.add('active');
+      if (section === explorerMode) {
+        tableContainer.style.display = 'flex';
+      }
+    }
+    
+    function hideAllSections() {
+      explorerMode.classList.remove('active');
+      guessMode.classList.remove('active');
+      aboutSection.style.display = 'none';
+      infoContainer.style.display = 'none';
+      tableContainer.style.display = 'none';
+      selectedElement = null;
+    }
+    
+    // Game Logic
+    const symbolBox = document.getElementById('symbolBox');
+    const userGuess = document.getElementById('userGuess');
+    const checkBtn = document.getElementById('checkBtn');
+    const feedback = document.getElementById('feedback');
+    const scoreDisplay = document.getElementById('score');
+    
+    let score = 0;
+    let currentElement = {};
+    const elementList = [
+      { symbol: "H", name: "Hydrogen" },
+      { symbol: "He", name: "Helium" },
+      { symbol: "Li", name: "Lithium" },
+      { symbol: "Be", name: "Beryllium" },
+      { symbol: "B", name: "Boron" },
+      { symbol: "C", name: "Carbon" },
+      { symbol: "N", name: "Nitrogen" },
+      { symbol: "O", name: "Oxygen" },
+      { symbol: "F", name: "Fluorine" },
+      { symbol: "Ne", name: "Neon" },
+      { symbol: "Na", name: "Sodium" },
+      { symbol: "Mg", name: "Magnesium" },
+      { symbol: "Al", name: "Aluminium" },
+      { symbol: "Si", name: "Silicon" },
+      { symbol: "P", name: "Phosphorus" },
+      { symbol: "S", name: "Sulfur" },
+      { symbol: "Cl", name: "Chlorine" },
+      { symbol: "Ar", name: "Argon" },
+      { symbol: "K", name: "Potassium" },
+      { symbol: "Ca", name: "Calcium" },
+      { symbol: "Sc", name: "Scandium" },
+      { symbol: "Ti", name: "Titanium" },
+      { symbol: "V", name: "Vanadium" },
+      { symbol: "Cr", name: "Chromium" },
+      { symbol: "Mn", name: "Manganese" },
+      { symbol: "Fe", name: "Iron" },
+      { symbol: "Co", name: "Cobalt" },
+      { symbol: "Ni", name: "Nickel" },
+      { symbol: "Cu", name: "Copper" },
+      { symbol: "Zn", name: "Zinc" },
+      { symbol: "Ga", name: "Gallium" },
+      { symbol: "Ge", name: "Germanium" },
+      { symbol: "As", name: "Arsenic" },
+      { symbol: "Se", name: "Selenium" },
+      { symbol: "Br", name: "Bromine" },
+      { symbol: "Kr", name: "Krypton" },
+      { symbol: "Rb", name: "Rubidium" },
+      { symbol: "Sr", name: "Strontium" },
+      { symbol: "Y", name: "Yttrium" },
+      { symbol: "Zr", name: "Zirconium" }, { symbol: "Nb", name: "Niobium" },
+      { symbol: "Mo", name: "Molybdenum" },
+      { symbol: "Tc", name: "Technetium" },
+      { symbol: "Ru", name: "Ruthenium" },
+      { symbol: "Rh", name: "Rhodium" },
+      { symbol: "Pd", name: "Palladium" },
+      { symbol: "Ag", name: "Silver" },
+      { symbol: "Cd", name: "Cadmium" },
+      { symbol: "In", name: "Indium" },
+      { symbol: "Sn", name: "Tin" },
+      { symbol: "Sb", name: "Antimony" },
+      { symbol: "Te", name: "Tellurium" },
+      { symbol: "I", name: "Iodine" },
+      { symbol: "Xe", name: "Xenon" },
+      { symbol: "Cs", name: "Cesium" },
+      { symbol: "Ba", name: "Barium" },
+      { symbol: "La", name: "Lanthanum" },
+      { symbol: "Ce", name: "Cerium" },
+      { symbol: "Pr", name: "Praseodymium" },
+      { symbol: "Nd", name: "Neodymium" }, { symbol: "Pm", name: "Promethium" },
+      { symbol: "Sm", name: "Samarium" },
+      { symbol: "Eu", name: "Europium" },
+      { symbol: "Gd", name: "Gadolinium" },
+      { symbol: "Tb", name: "Terbium" },
+      { symbol: "Dy", name: "Dysprosium" },
+      { symbol: "Ho", name: "Holmium" },
+      { symbol: "Er", name: "Erbium" },
+      { symbol: "Tm", name: "Thulium" },
+      { symbol: "Yb", name: "Ytterbium" },
+      { symbol: "Lu", name: "Lutetium" },
+      { symbol: "Hf", name: "Hafnium" },
+      { symbol: "Ta", name: "Tantalum" },
+      { symbol: "W", name: "Tungsten" },
+      { symbol: "Re", name: "Rhenium" },
+      { symbol: "Os", name: "Osmium" },
+      { symbol: "Ir", name: "Iridium" },
+      { symbol: "Pt", name: "Platinum" },
+      { symbol: "Au", name: "Gold" },
+      { symbol: "Hg", name: "Mercury" }, { symbol: "Tl", name: "Thallium" },
+      { symbol: "Pb", name: "Lead" },
+      { symbol: "Bi", name: "Bismuth" },
+      { symbol: "Po", name: "Polonium" },
+      { symbol: "At", name: "Astatine" },
+      { symbol: "Rn", name: "Radon" },
+      { symbol: "Fr", name: "Francium" },
+      { symbol: "Ra", name: "Radium" },
+      { symbol: "Ac", name: "Actinium" },
+      { symbol: "Th", name: "Thorium" },
+      { symbol: "Pa", name: "Protactinium" },
+      { symbol: "U", name: "Uranium" },
+      { symbol: "Np", name: "Neptunium" },
+      { symbol: "Pu", name: "Plutonium" },
+      { symbol: "Am", name: "Americium" },
+      { symbol: "Cm", name: "Curium" },
+      { symbol: "Bk", name: "Berkelium" },
+      { symbol: "Cf", name: "Californium" },
+      { symbol: "Es", name: "Einsteinium" },
+      { symbol: "Fm", name: "Fermium" }, { symbol: "Md", name: "Mendelevium" },
+      { symbol: "No", name: "Nobelium" },
+      { symbol: "Lr", name: "Lawrencium" },
+      { symbol: "Rf", name: "Rutherfordium" },
+      { symbol: "Db", name: "Dubnium" },
+      { symbol: "Sg", name: "Seaborgium" },
+      { symbol: "Bh", name: "Bohrium" },
+      { symbol: "Hs", name: "Hassium" },
+      { symbol: "Mt", name: "Meitnerium" },
+      { symbol: "Ds", name: "Darmstadtium" },
+      { symbol: "Rg", name: "Roentgenium" },
+      { symbol: "Cn", name: "Copernicium" },
+      { symbol: "Nh", name: "Nihonium" },
+      { symbol: "Fl", name: "Flerovium" },
+      { symbol: "Mc", name: "Moscovium" },
+      { symbol: "Lv", name: "Livermorium" },
+      { symbol: "Ts", name: "Tennessine" },
+      { symbol: "Og", name: "Oganesson" }
+      
+    ];
+    
+    function getRandomElement() {
+      const randomIndex = Math.floor(Math.random() * elementList.length);
+      currentElement = elementList[randomIndex];
+      symbolBox.textContent = currentElement.symbol;
+      userGuess.value = "";
+      feedback.textContent = "";
+    }
+    
+    getRandomElement();
+    
+    checkBtn.addEventListener('click', checkAnswer);
+    userGuess.addEventListener('keypress', function(e) {
+      if (e.key === "Enter") {
+        checkAnswer();
+      }
+    });
+    
+    function normalize(text) {
+      return text.trim().toLowerCase().replace(/\s+/g, ' ');
+    }
+    
+    
+    function checkAnswer() {
+      const userInput = normalize(userGuess.value);
+      const correctAnswer = normalize(currentElement.name);
+      
+      if (userInput === "") {
+        feedback.textContent = "⚠️ Please enter a spelling";
+        feedback.style.color = "orange";
+        return;
+      }
+      
+      if (userInput === correctAnswer) {
+        feedback.textContent = "✅ Correct!";
+        feedback.style.color = "lightgreen";
+        score++;
+        scoreDisplay.textContent = score;
+        setTimeout(getRandomElement, 1000);
+      } else {
+        feedback.textContent = "❌ Try Again!";
+        feedback.style.color = "red";
+      }
+    }
+    
+    const footer = document.getElementById("footer");
+    
+    window.addEventListener("resize", () => {
+      const isKeyboardOpen = window.innerHeight < screen.height * 0.75;
+      if (isKeyboardOpen) {
+        footer.style.display = "none";
+      } else {
+        footer.style.display = "block";
+      }
+    });
+    const elementData = [
+    {
+      symbol: "H",
+      name: "Hydrogen",
+      number: 1,
+      group: 1,
+      mass: 1.008,
+      valency: 1,
+      use: "Fuel cells"
+    },
+    {
+      symbol: "He",
+      name: "Helium",
+      number: 2,
+      group: 18,
+      mass: 4.0026,
+      valency: 0,
+      use: "Balloons"
+    },
+    {
+      symbol: "Li",
+      name: "Lithium",
+      number: 3,
+      group: 1,
+      mass: 6.94,
+      valency: 1,
+      use: "Batteries"
+    },
+    {
+      symbol: "Be",
+      name: "Beryllium",
+      number: 4,
+      group: 2,
+      mass: 9.0122,
+      valency: 2,
+      use: "Aerospace"
+    },
+    {
+      symbol: "B",
+      name: "Boron",
+      number: 5,
+      group: 13,
+      mass: 10.81,
+      valency: 3,
+      use: "Fiberglass"
+    },
+    {
+      symbol: "C",
+      name: "Carbon",
+      number: 6,
+      group: 14,
+      mass: 12.011,
+      valency: 4,
+      use: "Organic compounds"
+    },
+    {
+      symbol: "N",
+      name: "Nitrogen",
+      number: 7,
+      group: 15,
+      mass: 14.007,
+      valency: 3,
+      use: "Fertilizers"
+    },
+    {
+      symbol: "O",
+      name: "Oxygen",
+      number: 8,
+      group: 16,
+      mass: 15.999,
+      valency: 2,
+      use: "Breathing"
+    },
+    {
+      symbol: "F",
+      name: "Fluorine",
+      number: 9,
+      group: 17,
+      mass: 18.998,
+      valency: 1,
+      use: "Toothpaste"
+    },
+    {
+      symbol: "Ne",
+      name: "Neon",
+      number: 10,
+      group: 18,
+      mass: 20.180,
+      valency: 0,
+      use: "Signs"
+    },
+    {
+      symbol: "Na",
+      name: "Sodium",
+      number: 11,
+      group: 1,
+      mass: 22.990,
+      valency: 1,
+      use: "Salt"
+    },
+    {
+      symbol: "Mg",
+      name: "Magnesium",
+      number: 12,
+      group: 2,
+      mass: 24.305,
+      valency: 2,
+      use: "Fireworks"
+    },
+    {
+      symbol: "Al",
+      name: "Aluminum",
+      number: 13,
+      group: 13,
+      mass: 26.982,
+      valency: 3,
+      use: "Foil, Aircraft"
+    },
+    {
+      symbol: "Si",
+      name: "Silicon",
+      number: 14,
+      group: 14,
+      mass: 28.085,
+      valency: 4,
+      use: "Electronics"
+    },
+    {
+      symbol: "P",
+      name: "Phosphorus",
+      number: 15,
+      group: 15,
+      mass: 30.974,
+      valency: 3,
+      use: "Fertilizers"
+    },
+    {
+      symbol: "S",
+      name: "Sulfur",
+      number: 16,
+      group: 16,
+      mass: 32.06,
+      valency: 2,
+      use: "Gunpowder"
+    },
+    {
+      symbol: "Cl",
+      name: "Chlorine",
+      number: 17,
+      group: 17,
+      mass: 35.45,
+      valency: 1,
+      use: "Disinfectant"
+    },
+    {
+      symbol: "Ar",
+      name: "Argon",
+      number: 18,
+      group: 18,
+      mass: 39.948,
+      valency: 0,
+      use: "Light bulbs"
+    },
+    {
+      symbol: "K",
+      name: "Potassium",
+      number: 19,
+      group: 1,
+      mass: 39.098,
+      valency: 1,
+      use: "Fertilizers"
+    },
+    {
+      symbol: "Ca",
+      name: "Calcium",
+      number: 20,
+      group: 2,
+      mass: 40.078,
+      valency: 2,
+      use: "Bones, Cement"
+    },
+    {
+      symbol: "Sc",
+      name: "Scandium",
+      number: 21,
+      group: 3,
+      mass: 44.956,
+      valency: 3,
+      use: "Aerospace parts"
+    },
+    {
+      symbol: "Ti",
+      name: "Titanium",
+      number: 22,
+      group: 4,
+      mass: 47.867,
+      valency: 4,
+      use: "Aircraft, Medical Implants"
+    },
+    {
+      symbol: "V",
+      name: "Vanadium",
+      number: 23,
+      group: 5,
+      mass: 50.942,
+      valency: 5,
+      use: "Steel Alloys"
+    },
+    {
+      symbol: "Cr",
+      name: "Chromium",
+      number: 24,
+      group: 6,
+      mass: 51.996,
+      valency: 6,
+      use: "Stainless Steel"
+    },
+    {
+      symbol: "Mn",
+      name: "Manganese",
+      number: 25,
+      group: 7,
+      mass: 54.938,
+      valency: 7,
+      use: "Batteries, Steel"
+    },
+    {
+      symbol: "Fe",
+      name: "Iron",
+      number: 26,
+      group: 8,
+      mass: 55.845,
+      valency: 2,
+      use: "Construction, Blood"
+    },
+    {
+      symbol: "Co",
+      name: "Cobalt",
+      number: 27,
+      group: 9,
+      mass: 58.933,
+      valency: 2,
+      use: "Magnets, Batteries"
+    },
+    {
+      symbol: "Ni",
+      name: "Nickel",
+      number: 28,
+      group: 10,
+      mass: 58.693,
+      valency: 2,
+      use: "Coins, Stainless Steel"
+    },
+    {
+      symbol: "Cu",
+      name: "Copper",
+      number: 29,
+      group: 11,
+      mass: 63.546,
+      valency: 1,
+      use: "Wires, Electronics"
+    },
+    {
+      symbol: "Zn",
+      name: "Zinc",
+      number: 30,
+      group: 12,
+      mass: 65.38,
+      valency: 2,
+      use: "Galvanization"
+    },
+    {
+      symbol: "Ga",
+      name: "Gallium",
+      number: 31,
+      group: 13,
+      mass: 69.723,
+      valency: 3,
+      use: "Semiconductors"
+    },
+    {
+      symbol: "Ge",
+      name: "Germanium",
+      number: 32,
+      group: 14,
+      mass: 72.63,
+      valency: 4,
+      use: "Fiber Optics"
+    },
+    {
+      symbol: "As",
+      name: "Arsenic",
+      number: 33,
+      group: 15,
+      mass: 74.922,
+      valency: 3,
+      use: "Pesticides"
+    },
+    {
+      symbol: "Se",
+      name: "Selenium",
+      number: 34,
+      group: 16,
+      mass: 78.971,
+      valency: 2,
+      use: "Glass Coloring"
+    },
+    {
+      symbol: "Br",
+      name: "Bromine",
+      number: 35,
+      group: 17,
+      mass: 79.904,
+      valency: 1,
+      use: "Flame Retardants"
+    },
+    {
+      symbol: "Kr",
+      name: "Krypton",
+      number: 36,
+      group: 18,
+      mass: 83.798,
+      valency: 0,
+      use: "Lighting"
+    },
+    {
+      symbol: "Rb",
+      name: "Rubidium",
+      number: 37,
+      group: 1,
+      mass: 85.468,
+      valency: 1,
+      use: "Research"
+    },
+    {
+      symbol: "Sr",
+      name: "Strontium",
+      number: 38,
+      group: 2,
+      mass: 87.62,
+      valency: 2,
+      use: "Fireworks"
+    },
+    {
+      symbol: "Y",
+      name: "Yttrium",
+      number: 39,
+      group: 3,
+      mass: 88.906,
+      valency: 3,
+      use: "LEDs, Superconductors"
+    },
+    {
+      symbol: "Zr",
+      name: "Zirconium",
+      number: 40,
+      group: 4,
+      mass: 91.224,
+      valency: 4,
+      use: "Nuclear Reactors"
+    },
+    {
+      symbol: "Nb",
+      name: "Niobium",
+      number: 41,
+      group: 5,
+      mass: 92.906,
+      valency: 5,
+      use: "Steel Alloys"
+    },
+    {
+      symbol: "Mo",
+      name: "Molybdenum",
+      number: 42,
+      group: 6,
+      mass: 95.95,
+      valency: 6,
+      use: "High-strength Steel"
+    },
+    {
+      symbol: "Tc",
+      name: "Technetium",
+      number: 43,
+      group: 7,
+      mass: 98,
+      valency: 7,
+      use: "Medical Imaging"
+    },
+    {
+      symbol: "Ru",
+      name: "Ruthenium",
+      number: 44,
+      group: 8,
+      mass: 101.07,
+      valency: 4,
+      use: "Electronics"
+    },
+    {
+      symbol: "Rh",
+      name: "Rhodium",
+      number: 45,
+      group: 9,
+      mass: 102.91,
+      valency: 3,
+      use: "Catalytic Converters"
+    },
+    {
+      symbol: "Pd",
+      name: "Palladium",
+      number: 46,
+      group: 10,
+      mass: 106.42,
+      valency: 2,
+      use: "Jewelry, Catalysts"
+    },
+    {
+      symbol: "Ag",
+      name: "Silver",
+      number: 47,
+      group: 11,
+      mass: 107.87,
+      valency: 1,
+      use: "Coins, Jewelry"
+    },
+    {
+      symbol: "Cd",
+      name: "Cadmium",
+      number: 48,
+      group: 12,
+      mass: 112.41,
+      valency: 2,
+      use: "Batteries"
+    },
+    {
+      symbol: "In",
+      name: "Indium",
+      number: 49,
+      group: 13,
+      mass: 114.82,
+      valency: 3,
+      use: "Touchscreens"
+    },
+    {
+      symbol: "Sn",
+      name: "Tin",
+      number: 50,
+      group: 14,
+      mass: 118.71,
+      valency: 4,
+      use: "Cans, Alloys"
+    },
+    {
+      symbol: "Sb",
+      name: "Antimony",
+      number: 51,
+      group: 15,
+      mass: 121.76,
+      valency: 3,
+      use: "Flame Retardants"
+    },
+    {
+      symbol: "Te",
+      name: "Tellurium",
+      number: 52,
+      group: 16,
+      mass: 127.6,
+      valency: 2,
+      use: "Thermoelectric Devices"
+    },
+    {
+      symbol: "I",
+      name: "Iodine",
+      number: 53,
+      group: 17,
+      mass: 126.90,
+      valency: 1,
+      use: "Disinfectants"
+    },
+    {
+      symbol: "Xe",
+      name: "Xenon",
+      number: 54,
+      group: 18,
+      mass: 131.29,
+      valency: 0,
+      use: "Lighting"
+    },
+    {
+      symbol: "Cs",
+      name: "Cesium",
+      number: 55,
+      group: 1,
+      mass: 132.91,
+      valency: 1,
+      use: "Atomic Clocks"
+    },
+    {
+      symbol: "Ba",
+      name: "Barium",
+      number: 56,
+      group: 2,
+      mass: 137.33,
+      valency: 2,
+      use: "X-ray Imaging"
+    },
+    {
+      symbol: "La",
+      name: "Lanthanum",
+      number: 57,
+      group: 3,
+      mass: 138.91,
+      valency: 3,
+      use: "Camera Lenses"
+    },
+    {
+      symbol: "Ce",
+      name: "Cerium",
+      number: 58,
+      group: "Lanthanide",
+      mass: 140.12,
+      valency: 4,
+      use: "Glass Polishing"
+    },
+    {
+      symbol: "Pr",
+      name: "Praseodymium",
+      number: 59,
+      group: "Lanthanide",
+      mass: 140.91,
+      valency: 3,
+      use: "Magnets"
+    },
+    {
+      symbol: "Nd",
+      name: "Neodymium",
+      number: 60,
+      group: "Lanthanide",
+      mass: 144.24,
+      valency: 3,
+      use: "Powerful Magnets"
+    },
+    {
+      symbol: "Pm",
+      name: "Promethium",
+      number: 61,
+      group: "Lanthanide",
+      mass: 145,
+      valency: 3,
+      use: "Nuclear Batteries"
+    },
+    {
+      symbol: "Sm",
+      name: "Samarium",
+      number: 62,
+      group: "Lanthanide",
+      mass: 150.36,
+      valency: 3,
+      use: "Magnets"
+    },
+    {
+      symbol: "Eu",
+      name: "Europium",
+      number: 63,
+      group: "Lanthanide",
+      mass: 151.96,
+      valency: 3,
+      use: "TV Screens"
+    },
+    {
+      symbol: "Gd",
+      name: "Gadolinium",
+      number: 64,
+      group: "Lanthanide",
+      mass: 157.25,
+      valency: 3,
+      use: "MRI Contrast Agents"
+    },
+    {
+      symbol: "Tb",
+      name: "Terbium",
+      number: 65,
+      group: "Lanthanide",
+      mass: 158.93,
+      valency: 3,
+      use: "Green Phosphors"
+    },
+    {
+      symbol: "Dy",
+      name: "Dysprosium",
+      number: 66,
+      group: "Lanthanide",
+      mass: 162.50,
+      valency: 3,
+      use: "Lasers"
+    },
+    {
+      symbol: "Ho",
+      name: "Holmium",
+      number: 67,
+      group: "Lanthanide",
+      mass: 164.93,
+      valency: 3,
+      use: "Magnetic Fields"
+    },
+    {
+      symbol: "Er",
+      name: "Erbium",
+      number: 68,
+      group: "Lanthanide",
+      mass: 167.26,
+      valency: 3,
+      use: "Fiber Optics"
+    },
+    {
+      symbol: "Tm",
+      name: "Thulium",
+      number: 69,
+      group: "Lanthanide",
+      mass: 168.93,
+      valency: 3,
+      use: "Portable X-ray"
+    },
+    {
+      symbol: "Yb",
+      name: "Ytterbium",
+      number: 70,
+      group: "Lanthanide",
+      mass: 173.04,
+      valency: 2,
+      use: "Atomic Clocks"
+    },
+    {
+      symbol: "Lu",
+      name: "Lutetium",
+      number: 71,
+      group: "Lanthanide",
+      mass: 174.97,
+      valency: 3,
+      use: "Catalysts"
+    },
+    {
+      symbol: "Hf",
+      name: "Hafnium",
+      number: 72,
+      group: 4,
+      mass: 178.49,
+      valency: 4,
+      use: "Nuclear Reactors"
+    },
+    {
+      symbol: "Ta",
+      name: "Tantalum",
+      number: 73,
+      group: 5,
+      mass: 180.95,
+      valency: 5,
+      use: "Electronics"
+    },
+    {
+      symbol: "W",
+      name: "Tungsten",
+      number: 74,
+      group: 6,
+      mass: 183.84,
+      valency: 6,
+      use: "Light Bulbs"
+    },
+    {
+      symbol: "Re",
+      name: "Rhenium",
+      number: 75,
+      group: 7,
+      mass: 186.21,
+      valency: 7,
+      use: "Jet Engines"
+    },
+    {
+      symbol: "Os",
+      name: "Osmium",
+      number: 76,
+      group: 8,
+      mass: 190.23,
+      valency: 4,
+      use: "Fountain Pens"
+    },
+    {
+      symbol: "Ir",
+      name: "Iridium",
+      number: 77,
+      group: 9,
+      mass: 192.22,
+      valency: 4,
+      use: "Spark Plugs"
+    },
+    {
+      symbol: "Pt",
+      name: "Platinum",
+      number: 78,
+      group: 10,
+      mass: 195.08,
+      valency: 2,
+      use: "Jewelry"
+    },
+    {
+      symbol: "Au",
+      name: "Gold",
+      number: 79,
+      group: 11,
+      mass: 196.97,
+      valency: 1,
+      use: "Jewelry"
+    },
+    {
+      symbol: "Hg",
+      name: "Mercury",
+      number: 80,
+      group: 12,
+      mass: 200.59,
+      valency: 2,
+      use: "Thermometers"
+    },
+    {
+      symbol: "Tl",
+      name: "Thallium",
+      number: 81,
+      group: 13,
+      mass: 204.38,
+      valency: 3,
+      use: "Electronics"
+    },
+    {
+      symbol: "Pb",
+      name: "Lead",
+      number: 82,
+      group: 14,
+      mass: 207.2,
+      valency: 4,
+      use: "Batteries"
+    },
+    {
+      symbol: "Bi",
+      name: "Bismuth",
+      number: 83,
+      group: 15,
+      mass: 208.98,
+      valency: 3,
+      use: "Medications"
+    },
+    {
+      symbol: "Po",
+      name: "Polonium",
+      number: 84,
+      group: 16,
+      mass: 209,
+      valency: 2,
+      use: "Nuclear Batteries"
+    },
+    {
+      symbol: "At",
+      name: "Astatine",
+      number: 85,
+      group: 17,
+      mass: 210,
+      valency: 1,
+      use: "Research"
+    },
+    {
+      symbol: "Rn",
+      name: "Radon",
+      number: 86,
+      group: 18,
+      mass: 222,
+      valency: 0,
+      use: "Radiotherapy"
+    },
+    {
+      symbol: "Fr",
+      name: "Francium",
+      number: 87,
+      group: 1,
+      mass: 223,
+      valency: 1,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Ra",
+      name: "Radium",
+      number: 88,
+      group: 2,
+      mass: 226,
+      valency: 2,
+      use: "Cancer Treatment"
+    },
+    {
+      symbol: "Ac",
+      name: "Actinium",
+      number: 89,
+      group: "Actinide",
+      mass: 227,
+      valency: 3,
+      use: "Radiotherapy"
+    },
+    {
+      symbol: "Th",
+      name: "Thorium",
+      number: 90,
+      group: "Actinide",
+      mass: 232.04,
+      valency: 4,
+      use: "Nuclear Fuel"
+    },
+    {
+      symbol: "Pa",
+      name: "Protactinium",
+      number: 91,
+      group: "Actinide",
+      mass: 231.04,
+      valency: 5,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "U",
+      name: "Uranium",
+      number: 92,
+      group: "Actinide",
+      mass: 238.03,
+      valency: 6,
+      use: "Nuclear Fuel"
+    },
+    {
+      symbol: "Np",
+      name: "Neptunium",
+      number: 93,
+      group: "Actinide",
+      mass: 237,
+      valency: 5,
+      use: "Nuclear Reactors"
+    },
+    {
+      symbol: "Pu",
+      name: "Plutonium",
+      number: 94,
+      group: "Actinide",
+      mass: 244,
+      valency: 4,
+      use: "Nuclear Weapons & Reactors"
+    },
+    {
+      symbol: "Am",
+      name: "Americium",
+      number: 95,
+      group: "Actinide",
+      mass: 243,
+      valency: 3,
+      use: "Smoke Detectors"
+    },
+    {
+      symbol: "Cm",
+      name: "Curium",
+      number: 96,
+      group: "Actinide",
+      mass: 247,
+      valency: 3,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Bk",
+      name: "Berkelium",
+      number: 97,
+      group: "Actinide",
+      mass: 247,
+      valency: 3,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Cf",
+      name: "Californium",
+      number: 98,
+      group: "Actinide",
+      mass: 251,
+      valency: 3,
+      use: "Neutron Source"
+    },
+    {
+      symbol: "Es",
+      name: "Einsteinium",
+      number: 99,
+      group: "Actinide",
+      mass: 252,
+      valency: 3,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Fm",
+      name: "Fermium",
+      number: 100,
+      group: "Actinide",
+      mass: 257,
+      valency: 3,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Md",
+      name: "Mendelevium",
+      number: 101,
+      group: "Actinide",
+      mass: 258,
+      valency: 3,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "No",
+      name: "Nobelium",
+      number: 102,
+      group: "Actinide",
+      mass: 259,
+      valency: 2,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Lr",
+      name: "Lawrencium",
+      number: 103,
+      group: "Actinide",
+      mass: 262,
+      valency: 3,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Rf",
+      name: "Rutherfordium",
+      number: 104,
+      group: 4,
+      mass: 267,
+      valency: 4,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Db",
+      name: "Dubnium",
+      number: 105,
+      group: 5,
+      mass: 268,
+      valency: 5,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Sg",
+      name: "Seaborgium",
+      number: 106,
+      group: 6,
+      mass: 269,
+      valency: 6,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Bh",
+      name: "Bohrium",
+      number: 107,
+      group: 7,
+      mass: 270,
+      valency: 7,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Hs",
+      name: "Hassium",
+      number: 108,
+      group: 8,
+      mass: 277,
+      valency: 8,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Mt",
+      name: "Meitnerium",
+      number: 109,
+      group: 9,
+      mass: 278,
+      valency: "Unknown",
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Ds",
+      name: "Darmstadtium",
+      number: 110,
+      group: 10,
+      mass: 281,
+      valency: "Unknown",
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Rg",
+      name: "Roentgenium",
+      number: 111,
+      group: 11,
+      mass: 282,
+      valency: "Unknown",
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Cn",
+      name: "Copernicium",
+      number: 112,
+      group: 12,
+      mass: 285,
+      valency: 2,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Nh",
+      name: "Nihonium",
+      number: 113,
+      group: 13,
+      mass: 286,
+      valency: 1,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Fl",
+      name: "Flerovium",
+      number: 114,
+      group: 14,
+      mass: 289,
+      valency: 2,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Mc",
+      name: "Moscovium",
+      number: 115,
+      group: 15,
+      mass: 290,
+      valency: 3,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Lv",
+      name: "Livermorium",
+      number: 116,
+      group: 16,
+      mass: 293,
+      valency: 2,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Ts",
+      name: "Tennessine",
+      number: 117,
+      group: 17,
+      mass: 294,
+      valency: 1,
+      use: "Scientific Research"
+    },
+    {
+      symbol: "Og",
+      name: "Oganesson",
+      number: 118,
+      group: 18,
+      mass: 294,
+      valency: 0,
+      use: "Scientific Research"
+    }];
+    const tableContainerDiv = document.getElementById('tableContainer');
+    
+    elementData.forEach(el => {
+      const elementDiv = document.createElement('div');
+      elementDiv.className = 'element';
+      elementDiv.setAttribute('data-symbol', el.symbol);
+      elementDiv.setAttribute('data-name', el.name);
+      elementDiv.setAttribute('data-number', el.number);
+      elementDiv.setAttribute('data-group', el.group);
+      elementDiv.setAttribute('data-mass', el.mass);
+      elementDiv.setAttribute('data-valency', el.valency);
+      elementDiv.setAttribute('data-use', el.use);
+      
+      elementDiv.innerHTML = `
+    <div class="symbol">${el.symbol}</div>
+    <div class="element-name">${el.name}</div>
+  `;
+      
+      // Add event listener for showing info
+      elementDiv.addEventListener('click', () => {
+        if (selectedElement === elementDiv) {
+          infoContainer.style.display = 'none';
+          tableContainerDiv.style.display = 'flex';
+          selectedElement = null;
+        } else {
+          document.getElementById('elName').textContent = el.name;
+          document.getElementById('elSymbol').textContent = el.symbol;
+          document.getElementById('elNumber').textContent = el.number;
+          document.getElementById('elGroup').textContent = el.group;
+          document.getElementById('elMass').textContent = el.mass;
+          document.getElementById('elValency').textContent = el.valency;
+          document.getElementById('elUse').textContent = el.use;
+          
+          tableContainerDiv.style.display = 'none';
+          infoContainer.style.display = 'block';
+          selectedElement = elementDiv;
+        }
+      });
+      
+      tableContainerDiv.appendChild(elementDiv);
+    });
+    
+    const hardQuizBtn = document.getElementById("hardQuizBtn");
+    
+    function toggleHardQuizBtn(mode) {
+      if (mode === "explore") {
+        hardQuizBtn.style.display = "flex";
+      } else {
+        hardQuizBtn.style.display = "none";
+      }
+    }
+    
+    // Update your existing button click handlers:
+    buttons.explore.onclick = () => {
+      switchMode("explore");
+      toggleHardQuizBtn("explore");
+    };
+    buttons.guess.onclick = () => {
+      switchMode("guess");
+      toggleHardQuizBtn("guess");
+    };
+    buttons.quiz.onclick = () => {
+      switchMode("quiz");
+      toggleHardQuizBtn("quiz");
+    };
+    buttons.about.onclick = () => {
+      switchMode("about");
+      toggleHardQuizBtn("about");
+    };
+  </script>
+  
+</body>
+
+</html>
